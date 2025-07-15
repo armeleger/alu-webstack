@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# This script checks A records for subdomains of a domain using dig
+
+function get_subdomain_info {
+    local full_domain=$1
+    record_info=$(dig +short "$full_domain" | head -n 1)
+    if [ -n "$record_info" ]; then
+        echo "The subdomain ${full_domain%%.*} is a A record and points to $record_info"
+    else
+        echo "No A record found for $full_domain"
+    fi
+}
+
+domain=$1
+sub=$2
+
+if [ -n "$domain" ] && [ -z "$sub" ]; then
+    for s in www lb-01 web-01 web-02; do
+        get_subdomain_info "$s.$domain"
+    done
+elif [ -n "$domain" ] && [ -n "$sub" ]; then
+    get_subdomain_info "$sub.$domain"
+fi

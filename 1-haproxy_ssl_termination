@@ -1,0 +1,19 @@
+global
+    log /dev/log local0
+    maxconn 4096
+    tune.ssl.default-dh-param 2048
+
+defaults
+    log global
+    mode http
+    option httplog
+    timeout connect 5000ms
+    timeout client  50000ms
+    timeout server  50000ms
+
+frontend https_front
+    bind *:443 ssl crt /etc/letsencrypt/live/www.yourdomain.com/fullchain.pem key /etc/letsencrypt/live/www.yourdomain.com/privkey.pem
+    default_backend web_backend
+
+backend web_backend
+    server web1 127.0.0.1:80
